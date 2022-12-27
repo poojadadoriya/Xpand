@@ -1,7 +1,7 @@
-class Api::V1::UsersController < ApplicationController
+ class Api::V1::UsersController < ApplicationController
 	  protect_from_forgery with: :null_session
 
-	  before_action :authorize_request, except: [:create, :update, :index, :create_contact]
+	  before_action :authorize_request, except: [:create, :update, :index, :create_contact, :show, :destroy]
 	  # before_action :find_user, except: %i[create index update]
 
   
@@ -46,6 +46,24 @@ class Api::V1::UsersController < ApplicationController
     end
   end
 
+  def show
+     @user = User.find_by(id:params[:id])
+    if @user.present?
+     render json: UserSerializer.new(@user)
+    else
+      render json: {errors: ['Not present']}
+    end
+  end
+
+
+  def destroy
+    @user = User.find_by(id:params[:id])
+    if @user.delete
+      render json: {message: ['Deleted successfully']}
+    else
+      render json: {errors: 'Unable to delete'}
+    end
+  end
   
   
 end
